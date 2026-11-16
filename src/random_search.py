@@ -69,14 +69,20 @@ def random_search(num_iterations=5, num_commands=100):
 
 
 
+
 if __name__ == "__main__":
-    best_solution, best_score = random_search(
-        num_iterations=5,
-        num_commands=100
-    )
+    
+    np.random.seed(42)
+    command_lengths = [10, 100, 500]
 
-    print("\n--- Random Search Results ---")
-    print("Best fitness:", best_score)
-    print("Best chromosome length:", len(best_solution))
+    for num_commands in command_lengths:
+        print(f"\n--- Testing {num_commands} commands ---")
 
+        best_solution, best_score = random_search(
+            num_iterations=5,
+            num_commands=num_commands
+        )
+
+        print("Best fitness:", best_score)
+        print("Best chromosome length:", len(best_solution))
 
