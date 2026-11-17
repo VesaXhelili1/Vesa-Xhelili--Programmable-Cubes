@@ -33,6 +33,7 @@ if __name__ == "__main__":
 
     random_results = []
     hill_results = []
+    improved_hill_results = []
 
     for seed in seeds:
         print(f"\n--- Testing seed {seed} ---")
@@ -57,12 +58,35 @@ if __name__ == "__main__":
         )
         hill_time = time.perf_counter() - start_time
 
+
+        # Improved Hill Climbing (10 mutations)
+        np.random.seed(seed)
+
+        start_time = time.perf_counter()
+        _, improved_hill_fitness = hill_climbing(
+            num_iterations=num_evaluations - 1,
+            num_commands=num_commands,
+            num_mutations=10
+        )
+        improved_hill_time = time.perf_counter() - start_time
+
+
         random_results.append((random_fitness, random_time))
         hill_results.append((hill_fitness, hill_time))
+
+        improved_hill_results.append(
+            (improved_hill_fitness, improved_hill_time)
+        )
 
         print(f"\nSeed {seed} results:")
         print(f"Random Search: {random_fitness:.6f}, {random_time:.2f}s")
         print(f"Hill Climbing: {hill_fitness:.6f}, {hill_time:.2f}s")
+
+        print(
+            f"Improved Hill Climbing: "
+            f"{improved_hill_fitness:.6f}, "
+            f"{improved_hill_time:.2f}s"
+        )
 
     # Calculate averages
     random_avg_fitness = np.mean([r[0] for r in random_results])
@@ -70,6 +94,15 @@ if __name__ == "__main__":
 
     hill_avg_fitness = np.mean([r[0] for r in hill_results])
     hill_avg_time = np.mean([r[1] for r in hill_results])
+
+
+    improved_hill_avg_fitness = np.mean(
+        [r[0] for r in improved_hill_results]
+    )
+    improved_hill_avg_time = np.mean(
+        [r[1] for r in improved_hill_results]
+    )
+
    
     print("\n--- Average Results (5 runs) ---")
     print(f"Commands per chromosome: {num_commands}")
@@ -82,9 +115,22 @@ if __name__ == "__main__":
     print(f"Hill Climbing time: {hill_avg_time:.2f}s")
 
 
+    print(f"\nImproved Hill Climbing fitness: {improved_hill_avg_fitness:.6f}")
+    print(f"Improved Hill Climbing time: {improved_hill_avg_time:.2f}s")
+
+
+
     # Compare average fitness
-    algorithms = ["Random Search", "Hill Climbing"]
-    average_fitness = [random_avg_fitness, hill_avg_fitness]
+    algorithms = [
+    "Random Search",
+    "Hill Climbing (1)",
+    "Hill Climbing (10)"
+]
+    average_fitness = [
+    random_avg_fitness,
+    hill_avg_fitness,
+    improved_hill_avg_fitness
+]
 
     plt.figure(figsize=(8, 5))
 
@@ -98,7 +144,11 @@ if __name__ == "__main__":
     plt.show()
 
     # Compare average execution time
-    average_times = [random_avg_time, hill_avg_time]
+    average_times = [
+    random_avg_time,
+    hill_avg_time,
+    improved_hill_avg_time
+]
 
     plt.figure(figsize=(8, 5))
 
