@@ -21,6 +21,16 @@ def generate_chromosome(num_cubes=148, num_commands=6000):
     return np.array(chromosome)
 
 
+def try_legal_move(cubes, cube_id, move):
+    result = cubes.apply_single_update_step(
+        cube_id,
+        move,
+        verbose=False
+    )
+
+    return result == 1
+
+
 
 def evaluate_chromosome(chromosome):
     project_root = Path(__file__).resolve().parent.parent
@@ -78,8 +88,31 @@ def evaluate_cube_placement(chromosome):
             "data/ISS/Initial_Config.npy"
         )
 
+        
         cubes = ProgrammableCubes(initial_positions)
-        steps_needed = cubes.apply_chromosome(chromosome,False)
+
+        steps_needed = int(
+            np.where(chromosome == -1)[0][0] / 2
+        )
+
+        successful_moves = 0
+
+        for i in range(steps_needed):
+            cube_id = int(chromosome[2 * i])
+            move = int(chromosome[2 * i + 1])
+
+            done = cubes.apply_single_update_step(
+                cube_id,
+                move,
+                step=i,
+                verbose=False
+            )
+
+            if done == 1:
+                successful_moves += 1
+
+        rejected_moves = steps_needed - successful_moves
+
 
         correct_cubes = 0
 
@@ -102,12 +135,20 @@ def evaluate_cube_placement(chromosome):
 
         total_cubes = len(cubes.cube_position)
 
+        
         return {
             "correct_cubes": correct_cubes,
             "total_cubes": total_cubes,
             "cube_fraction": correct_cubes / total_cubes,
             "steps_needed": steps_needed,
+            "successful_moves": successful_moves,
+            "rejected_moves": rejected_moves,
+            "success_rate": (
+                successful_moves / steps_needed
+                if steps_needed > 0 else 0
+            ),
         }
+
 
     finally:
         os.chdir(original_directory)
@@ -125,6 +166,9 @@ def random_search(num_iterations=5, num_commands=100):
             num_cubes=148,
             num_commands=num_commands
         )
+
+        
+
 
         fitness = evaluate_chromosome(chromosome)
 
