@@ -7,22 +7,25 @@ from hill_climbing import hill_climbing
 
 
 
+
 # Complexity analysis
 #
 # n = number of commands in a chromosome
 # k = number of fitness evaluations
+# m = number of mutation operations per iteration
 # F(n) = time required by ESA's fitness evaluator
 #
 # Random Search:
 # Time:  O(k * (n + F(n)))
 # Space: O(n)
 #
-# Hill Climbing:
-# Time:  O(n + k * (n + F(n)))
+# Hill Climbing (including multiple mutations):
+# Time:  O(n + k * (n + m + F(n)))
 # Space: O(n)
 #
 # These bounds describe the search algorithms.
 # They exclude the internal memory used by ESA's simulator.
+
 
 
 
