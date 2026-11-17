@@ -71,6 +71,37 @@ def generate_legal_chromosome(num_commands=100):
 
     return np.array(chromosome), attempts
 
+
+def legal_move_search(num_iterations=30, num_commands=100):
+    best_chromosome = None
+    best_fitness = float("inf")
+
+    for iteration in range(num_iterations):
+        chromosome, attempts = generate_legal_chromosome(
+            num_commands=num_commands
+        )
+
+        commands_generated = (len(chromosome) - 1) // 2
+
+        if commands_generated != num_commands:
+            print(f"Iteration {iteration + 1}: Incomplete chromosome")
+            continue
+
+        fitness = evaluate_chromosome(chromosome)
+
+        if fitness < best_fitness:
+            best_fitness = fitness
+            best_chromosome = chromosome.copy()
+
+            print(
+                f"Iteration {iteration + 1}: "
+                f"Improved fitness to {best_fitness:.6f}"
+            )
+
+    return best_chromosome, best_fitness
+
+
+
 if __name__ == "__main__":
     cubes = initialize_cubes()
 
@@ -111,3 +142,28 @@ if __name__ == "__main__":
     fitness = evaluate_chromosome(chromosome)
     print("Legal chromosome fitness:", fitness)
 
+
+
+    print("\n--- Improved Legal-Move Search Test ---")
+
+    np.random.seed(42)
+
+    best_chromosome, best_fitness = legal_move_search(
+        num_iterations=30,
+        num_commands=100
+    )
+
+    assert best_chromosome is not None
+
+    placement = evaluate_cube_placement(best_chromosome)
+
+    print("\n--- Best Solution ---")
+    print("Best fitness:", best_fitness)
+    print("Correct cubes:", placement["correct_cubes"])
+    print("Successful moves:", placement["successful_moves"])
+    print("Rejected moves:", placement["rejected_moves"])
+
+    assert placement["successful_moves"] == 100
+    assert placement["rejected_moves"] == 0
+
+    print("Improved Legal-Move Search: PASSED")

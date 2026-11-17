@@ -1,70 +1,69 @@
 
 import io
-from contextlib import redirect_stdout
 import sys
 from pathlib import Path
+from contextlib import redirect_stdout
+
+import numpy as np
 
 # Make the src folder available for imports
 project_root = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(project_root / "src"))
 
-
-import numpy as np
-
 from random_search import generate_chromosome, evaluate_chromosome
 from hill_climbing import mutate_chromosome, hill_climbing
 
-np.random.seed(42)
 
-original = generate_chromosome(
-    num_cubes=148,
-    num_commands=100
-)
-original_backup = original.copy()
+def test_mutation_validation():
+    np.random.seed(42)
 
-for num_mutations in [1, 3, 5, 10]:
-    mutated = mutate_chromosome(
-        original,
-        num_mutations=num_mutations
+    original = generate_chromosome(
+        num_cubes=148,
+        num_commands=100
+    )
+    original_backup = original.copy()
+
+    for num_mutations in [1, 3, 5, 10]:
+        mutated = mutate_chromosome(
+            original,
+            num_mutations=num_mutations
+        )
+
+        assert len(mutated) == len(original)
+        assert mutated[-1] == -1
+        assert np.all((mutated[:-1:2] >= 0) & (mutated[:-1:2] < 148))
+        assert np.all((mutated[1:-1:2] >= 0) & (mutated[1:-1:2] < 6))
+        assert np.array_equal(original, original_backup)
+        assert not np.array_equal(mutated, original)
+
+    print("Mutation validation: PASSED")
+
+
+def test_hill_climbing_fitness():
+    np.random.seed(42)
+
+    initial_chromosome = generate_chromosome(
+        num_cubes=148,
+        num_commands=100
     )
 
-    assert len(mutated) == len(original)
-    assert mutated[-1] == -1
-    assert np.all((mutated[:-1:2] >= 0) & (mutated[:-1:2] < 148))
-    assert np.all((mutated[1:-1:2] >= 0) & (mutated[1:-1:2] < 6))
-    assert np.array_equal(original, original_backup)
-    assert not np.array_equal(mutated, original)
+    initial_fitness = evaluate_chromosome(initial_chromosome)
 
-    print(f"{num_mutations} mutations: PASSED")
+    # Reset seed to reproduce the same starting chromosome
+    np.random.seed(42)
 
-print("\nAll mutation validation tests passed!")
+    with redirect_stdout(io.StringIO()):
+        best_chromosome, best_fitness = hill_climbing(
+            num_iterations=99,
+            num_commands=100,
+            num_mutations=10
+        )
 
-# Validate Hill Climbing fitness
-np.random.seed(42)
+    assert best_fitness <= initial_fitness
 
-initial_chromosome = generate_chromosome(
-    num_cubes=148,
-    num_commands=100
-)
-
-initial_fitness = evaluate_chromosome(initial_chromosome)
-
-# Reset the seed to reproduce the same starting chromosome
-np.random.seed(42)
-
-with redirect_stdout(io.StringIO()):
-    best_chromosome, best_fitness = hill_climbing(
-        num_iterations=99,
-        num_commands=100,
-        num_mutations=10
+    assert np.isclose(
+        evaluate_chromosome(best_chromosome),
+        best_fitness
     )
 
-assert best_fitness <= initial_fitness
-
-assert np.isclose(
-    evaluate_chromosome(best_chromosome),
-    best_fitness
-)
-
-print("Hill Climbing fitness validation: PASSED")
-
+    print("Hill Climbing fitness validation: PASSED")

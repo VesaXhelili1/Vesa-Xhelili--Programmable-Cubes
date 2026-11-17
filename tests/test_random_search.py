@@ -15,45 +15,53 @@ from random_search import (
     evaluate_chromosome,
 )
 
-np.random.seed(42)
 
-with redirect_stdout(io.StringIO()):
-    best_chromosome, best_fitness = random_search(
-        num_iterations=100,
-        num_commands=100
-    )
+def test_random_search_validation():
+    np.random.seed(42)
 
-# Check the chromosome format
-assert len(best_chromosome) == 201
-assert best_chromosome[-1] == -1
+    with redirect_stdout(io.StringIO()):
+        best_chromosome, best_fitness = random_search(
+            num_iterations=100,
+            num_commands=100
+        )
 
-# Check that returned fitness matches ESA's evaluator
-actual_fitness = evaluate_chromosome(best_chromosome)
+    # Check the chromosome format
+    assert len(best_chromosome) == 201
+    assert best_chromosome[-1] == -1
 
-assert np.isclose(best_fitness, actual_fitness)
+    # Check that returned fitness matches ESA's evaluator
+    actual_fitness = evaluate_chromosome(best_chromosome)
 
-print("Random Search validation: PASSED")
-print("Best fitness:", best_fitness)
-print("Chromosome length:", len(best_chromosome))
+    assert np.isclose(best_fitness, actual_fitness)
+
+    print("Random Search validation: PASSED")
 
 
+def test_best_solution_selection():
+    np.random.seed(42)
 
-# Independently reproduce all 100 candidates
-np.random.seed(42)
+    with redirect_stdout(io.StringIO()):
+        best_chromosome, best_fitness = random_search(
+            num_iterations=100,
+            num_commands=100
+        )
 
-all_fitness_values = []
+    # Independently reproduce all 100 candidates
+    np.random.seed(42)
 
-for _ in range(100):
-    chromosome = generate_chromosome(
-        num_cubes=148,
-        num_commands=100
-    )
+    all_fitness_values = []
 
-    fitness = evaluate_chromosome(chromosome)
-    all_fitness_values.append(fitness)
+    for _ in range(100):
+        chromosome = generate_chromosome(
+            num_cubes=148,
+            num_commands=100
+        )
 
-expected_best = min(all_fitness_values)
+        fitness = evaluate_chromosome(chromosome)
+        all_fitness_values.append(fitness)
 
-assert np.isclose(best_fitness, expected_best)
+    expected_best = min(all_fitness_values)
 
-print("Best solution selection: PASSED")
+    assert np.isclose(best_fitness, expected_best)
+
+    print("Best solution selection: PASSED")
