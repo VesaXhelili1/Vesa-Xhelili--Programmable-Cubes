@@ -167,3 +167,29 @@ if __name__ == "__main__":
     assert placement["rejected_moves"] == 0
 
     print("Improved Legal-Move Search: PASSED")
+
+
+
+    print("\n--- Target Configuration Inspection ---")
+
+    project_root = Path(__file__).resolve().parent.parent
+    esa_path = project_root / "esa-reference" / "Challenge 3 Programmable Cubes"
+
+    original_directory = os.getcwd()
+
+    try:
+        os.chdir(esa_path)
+
+        target_positions = np.load("data/ISS/Target_Config.npy")
+        target_types = np.load("data/ISS/Target_Cube_Types.npy")
+        initial_types = np.load("data/ISS/Initial_Cube_Types.npy")
+
+    finally:
+        os.chdir(original_directory)
+
+    print("Target positions shape:", target_positions.shape)
+    print("Target types shape:", target_types.shape)
+    print("Initial types shape:", initial_types.shape)
+    print("Unique target cube types:", np.unique(target_types))
+    print("Unique initial cube types:", np.unique(initial_types))
+
