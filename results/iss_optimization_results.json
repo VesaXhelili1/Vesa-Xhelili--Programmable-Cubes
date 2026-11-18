@@ -1,0 +1,92 @@
+{
+    "best_solution": {
+        "seed": 20,
+        "evaluations": 300,
+        "fitness": -0.07718988830099939,
+        "correct_cubes": 32,
+        "successful_moves": 54,
+        "rejected_moves": 46
+    },
+    "all_results": [
+        {
+            "seed": 10,
+            "evaluations": 100,
+            "fitness": -0.053380364491475533,
+            "correct_cubes": 29,
+            "successful_moves": 48,
+            "rejected_moves": 52
+        },
+        {
+            "seed": 20,
+            "evaluations": 100,
+            "fitness": -0.06131687242798353,
+            "correct_cubes": 30,
+            "successful_moves": 59,
+            "rejected_moves": 41
+        },
+        {
+            "seed": 30,
+            "evaluations": 100,
+            "fitness": -0.037507348618459675,
+            "correct_cubes": 27,
+            "successful_moves": 56,
+            "rejected_moves": 44
+        },
+        {
+            "seed": 40,
+            "evaluations": 100,
+            "fitness": -0.053380364491475533,
+            "correct_cubes": 29,
+            "successful_moves": 48,
+            "rejected_moves": 52
+        },
+        {
+            "seed": 50,
+            "evaluations": 100,
+            "fitness": -0.045443856554967604,
+            "correct_cubes": 28,
+            "successful_moves": 58,
+            "rejected_moves": 42
+        },
+        {
+            "seed": 10,
+            "evaluations": 300,
+            "fitness": -0.06131687242798353,
+            "correct_cubes": 30,
+            "successful_moves": 52,
+            "rejected_moves": 48
+        },
+        {
+            "seed": 20,
+            "evaluations": 300,
+            "fitness": -0.07718988830099939,
+            "correct_cubes": 32,
+            "successful_moves": 54,
+            "rejected_moves": 46
+        },
+        {
+            "seed": 30,
+            "evaluations": 300,
+            "fitness": -0.06925338036449138,
+            "correct_cubes": 31,
+            "successful_moves": 45,
+            "rejected_moves": 55
+        },
+        {
+            "seed": 40,
+            "evaluations": 300,
+            "fitness": -0.06131687242798353,
+            "correct_cubes": 30,
+            "successful_moves": 46,
+            "rejected_moves": 54
+        },
+        {
+            "seed": 50,
+            "evaluations": 300,
+            "fitness": -0.06925338036449138,
+            "correct_cubes": 31,
+            "successful_moves": 53,
+            "rejected_moves": 47
+        }
+    ]
+}
