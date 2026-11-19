@@ -6,13 +6,13 @@ This project investigates optimization algorithms for the European Space Agency 
 
 It was developed as part of the **Design and Analysis of Algorithms (DAA)** course.
 
-The objective is to find sequences of movement commands that transform an initial configuration of programmable cubes toward a target configuration while improving the official ESA fitness score.
+The objective is to find sequences of movement commands that transform an initial configuration of programmable cubes toward a target configuration while improving ESA's official fitness score.
 
 Three scenarios were investigated:
 
 | Scenario   | Number of Cubes | Cube Types | Maximum Commands |
 | ---------- | --------------: | ---------: | ---------------: |
-| ISS        |             148 |          3 |           10,000 |
+| ISS        |             148 |          3 |            6,000 |
 | JWST       |             643 |          6 |           30,000 |
 | Enterprise |           1,472 |         10 |          100,000 |
 
@@ -88,6 +88,8 @@ The main project directories are organized as follows:
 │       ├── enterprise_experiments.py
 │       └── enterprise_experiment_analysis.py
 ├── tests/
+│   ├── jwst/
+│   ├── enterprise/
 │   └── ...
 ├── docs/
 │   ├── complexity-analysis.md
@@ -95,7 +97,7 @@ The main project directories are organized as follows:
 │   ├── jwst-experiment-results.md
 │   └── enterprise-experiment-results.md
 ├── notebooks/
-│   └── ...
+│   └── jwst_optimization.ipynb
 ├── results/
 │   ├── jwst/
 │   ├── enterprise/
@@ -108,6 +110,8 @@ The main project directories are organized as follows:
 ```
 
 The directory tree shows the main components rather than every generated file or experiment script.
+
+The official ESA reference files are stored locally and may be excluded from Git tracking.
 
 ## Environment Setup
 
@@ -129,7 +133,11 @@ The expected location is:
 esa-reference/Challenge 3 Programmable Cubes/
 ```
 
-ESA reference files are maintained separately from the project's own algorithm implementations.
+The ESA reference implementation is available from the official repository:
+
+https://github.com/esa/SpOC3
+
+The reference files must be obtained separately and placed in the expected directory before running algorithms that depend on ESA's simulator.
 
 ## Running the Project
 
@@ -141,7 +149,7 @@ conda activate programmable-cubes
 
 ### ISS Optimization
 
-Run the main Hybrid Search experiment:
+Run the main Hybrid Search optimization experiment:
 
 ```bash
 python src/optimize_iss.py
@@ -163,25 +171,25 @@ python src/visualize_iss.py
 
 JWST algorithms and experiment scripts are available in:
 
-```text
-src/jwst/
-```
+`src/jwst/`
 
 The computationally intensive JWST experiments were executed on Kaggle.
+
+The experiments include Random Search, Hill Climbing, Legal-Move Search, Hybrid Search, and checkpoint-based refinement.
 
 ### Enterprise Optimization
 
 Enterprise algorithms and experiment scripts are available in:
 
-```text
-src/enterprise/
-```
+`src/enterprise/`
 
 The main experiment runner is:
 
-```text
-src/enterprise/enterprise_experiments.py
-```
+`src/enterprise/enterprise_experiments.py`
+
+The Enterprise fitness evaluator is implemented in:
+
+`src/enterprise/enterprise_fitness.py`
 
 The Enterprise analysis script can be executed locally using previously saved results:
 
@@ -189,7 +197,9 @@ The Enterprise analysis script can be executed locally using previously saved re
 python src/enterprise/enterprise_experiment_analysis.py
 ```
 
-This generates the Enterprise comparison and convergence graphs without rerunning the ESA optimization experiments.
+The analysis script reads the corrected Enterprise V3 experiment statistics and refinement histories to generate comparison and convergence graphs.
+
+It does not rerun optimization.
 
 ### Automated Tests
 
@@ -199,9 +209,16 @@ Run the complete test suite:
 python -m pytest tests/ -q
 ```
 
+Latest recorded test results after correcting the Enterprise fitness evaluator:
+
+- Enterprise tests: 23 passed
+- Full project suite: 48 passed
+
 The project includes automated tests for chromosome generation, mutation, legal-movement logic, optimization algorithms, refinement, and selected saved-solution checks.
 
-Tests based on mocked simulator behavior verify implementation logic; official fitness scores were separately validated using ESA's real simulator.
+An Enterprise regression test also verifies that the fitness wrapper preserves the official ESA fitness direction.
+
+Tests using mocked simulator behavior verify implementation logic. Official fitness results were separately validated using ESA's real simulator.
 
 ## Best Experimental Results
 
@@ -211,11 +228,13 @@ The following table summarizes the strongest verified fitness values obtained du
 | ---------- | ---------------: | -------: |
 | ISS        |    -0.1009994121 |      100 |
 | JWST       |    -0.0605711111 |      300 |
-| Enterprise |    -0.0151087637 |      100 |
+| Enterprise |    -0.0139405321 |      100 |
 
 These values represent the best solutions found during the experiments.
 
-They do not imply that every cube reached its target position. Fitness values from different scenarios should not be treated as directly comparable measures of assembly completeness.
+They do not imply that every cube reached its target position.
+
+Fitness values from different scenarios should not be treated as directly comparable measures of assembly completeness.
 
 ---
 
@@ -267,7 +286,7 @@ Detailed analysis is available in [ISS Experiment Results](docs/iss-experiment-r
 
 The JWST scenario contains **643 cubes across six cube types**.
 
-The implemented approaches include Random Search, Hill Climbing, Legal-Move Search, Hybrid Search, and Checkpoint-Based Refinement.
+The implemented approaches include Random Search, Hill Climbing, Legal-Move Search, Hybrid Search, and checkpoint-based refinement.
 
 ### Optimization Progress
 
@@ -304,73 +323,127 @@ The complete target configuration was not achieved.
 
 The Enterprise scenario contains **1,472 cubes across ten cube types**, making it the largest of the three investigated scenarios.
 
-The optimization experiments used 100-command chromosomes.
+The optimization experiments used chromosomes containing 100 movement commands.
 
-### Initial Experiment — Enterprise V1
+### Official Fitness Correction
 
-Three algorithms were compared across seeds 10, 20, and 30, using 20 evaluations per run.
+During the final project audit, an incorrect fitness sign was identified in the Enterprise fitness wrapper.
 
-| Algorithm     |     Mean Fitness |     Best Fitness |
-| ------------- | ---------------: | ---------------: |
-| Random Search |     -0.004251956 |     -0.005425665 |
-| Hill Climbing |     -0.002491393 |     -0.003665102 |
-| Hybrid Search | **-0.005132238** | **-0.005425665** |
+The initial implementation reversed the score returned by ESA's official simulator.
 
-Hybrid Search achieved the best mean fitness in the initial experiment.
+This was corrected so that the wrapper returns the official fitness value directly.
 
-### Extended Experiment — Enterprise V2
+The correction was verified by comparing the wrapper's output against the official ESA evaluator.
 
-The evaluation budget was increased to 100 evaluations per run, with 100 commands per chromosome.
+An automated regression test was also added to prevent accidental sign reversal in future changes.
+
+The original Enterprise V1 and V2 experiments were retained as historical checkpoints but are **not used in the final performance conclusions**.
+
+All Enterprise results reported below were generated using the corrected fitness evaluator.
+
+### Corrected Algorithm Comparison — Enterprise V3
+
+Random Search, Hill Climbing, and Hybrid Search were evaluated across three seeds.
+
+Experimental settings:
+
+- Seeds: 10, 20, 30
+- Movement commands: 100
+- Evaluations per algorithm per seed: 100
+- Total algorithm runs: 9
+- Total requested fitness evaluations: 900
+
+#### Results by Seed
 
 | Algorithm     |          Seed 10 |          Seed 20 |          Seed 30 |
 | ------------- | ---------------: | ---------------: | ---------------: |
-| Random Search |     -0.005425665 |     -0.003665102 |     -0.004545383 |
-| Hill Climbing |     -0.010707355 |     -0.006305947 |     -0.008066510 |
-| Hybrid Search | **-0.012467919** | **-0.009827074** | **-0.008066510** |
+| Random Search |     -0.003377152 |     -0.004257433 |     -0.003377152 |
+| Hill Climbing |     -0.006898279 |     -0.008658842 |     -0.007778560 |
+| Hybrid Search | **-0.007778560** | **-0.009539124** | **-0.007778560** |
 
-The extended comparison consisted of nine runs and 900 requested fitness evaluations.
+#### Mean and Best Fitness
 
-Hybrid Search achieved the best result for Seeds 10 and 20 and tied with Hill Climbing for Seed 30.
+| Algorithm     |     Mean Fitness |     Best Fitness |
+| ------------- | ---------------: | ---------------: |
+| Random Search |     -0.003670579 |     -0.004257433 |
+| Hill Climbing |     -0.007778560 |     -0.008658842 |
+| Hybrid Search | **-0.008365415** | **-0.009539124** |
 
-**Best optimization fitness: -0.012467918622848122**
+Hybrid Search achieved the lowest mean fitness across the three random seeds.
 
-### Refinement Experiments
+It produced the best fitness for Seeds 10 and 20 and tied with Hill Climbing for Seed 30.
 
-The best Hybrid Search chromosome was selected as the baseline for mutation-based refinement.
+### Best Optimization Result
 
-Three mutation sizes were tested, each with 100 evaluations.
+The strongest optimization result was achieved by Hybrid Search using Seed 20.
 
-| Mutation Size |     Best Fitness | Improvements |
-| ------------- | ---------------: | -----------: |
-| 1 command     |     -0.013348200 |            1 |
-| 3 commands    | **-0.015108764** |            3 |
-| 10 commands   | **-0.015108764** |            3 |
+**Best optimization fitness: -0.009539123630673031**
 
-The 3-command and 10-command strategies reached the same best fitness.
+Hybrid Search uses legal-movement initialization followed by mutation-based optimization.
 
-Mutation size 3 was selected as the representative best solution, while both resulting chromosomes were preserved.
+Legal-movement initialization requires additional movement attempts beyond the counted fitness evaluations.
+
+### Mutation-Based Refinement
+
+The best corrected Hybrid Search chromosome was selected as the baseline for refinement.
+
+Three mutation sizes were tested:
+
+- 1 command
+- 3 commands
+- 10 commands
+
+Each mutation size was tested using 100 fitness evaluations, starting from the same corrected baseline.
+
+| Mutation Size |     Best Fitness | Improvements | Runtime |
+| ------------- | ---------------: | -----------: | ------: |
+| 1 command     |     -0.011299687 |            2 | 11.03 s |
+| 3 commands    |     -0.013060250 |            4 | 11.44 s |
+| 10 commands   | **-0.013940532** |        **4** | 11.38 s |
+
+The 10-command mutation strategy achieved the lowest official fitness among the tested refinement strategies.
 
 ### Best Verified Enterprise Solution
 
 | Metric                    |                     Result |
 | ------------------------- | -------------------------: |
-| Best ESA fitness          |      -0.015108763693270667 |
+| Best ESA fitness          |      -0.013940532081377245 |
 | Movement commands         |                        100 |
 | Optimization method       | Hybrid Search + Refinement |
-| Selected mutation size    |                          3 |
+| Best seed                 |                         20 |
+| Selected mutation size    |                         10 |
 | Official ESA verification |                     Passed |
+
+The corrected final chromosome is saved at:
+
+`results/enterprise/enterprise_refined_best.npy`
+
+The corrected V3 files are also available as:
+
+`results/enterprise/enterprise_v3_refined_best.npy`
+
+Experiment statistics:
+
+- `results/enterprise/enterprise_v3_final_summary.json`
+- `results/enterprise/enterprise_v3_refinement_summary.json`
 
 ### Enterprise Experimental Evidence
 
-Generated visualizations:
+Three visualizations were generated from the corrected V3 results:
 
 - `results/enterprise/enterprise_fitness_comparison.png`
 - `results/enterprise/enterprise_mutation_comparison.png`
 - `results/enterprise/enterprise_refinement_convergence.png`
 
-The `results/enterprise/` folder also contains checkpoint archives, experiment statistics, and best chromosomes.
+The graphs were produced using:
+
+`src/enterprise/enterprise_experiment_analysis.py`
+
+The local V3 refinement checkpoint archive contains the individual mutation histories used to reproduce the convergence graph.
 
 Detailed methodology, results, visualizations, and limitations are documented in [Enterprise Experiment Results](docs/enterprise-experiment-results.md).
+
+The Enterprise results demonstrate optimization improvements rather than complete target assembly.
 
 ---
 
@@ -396,9 +469,12 @@ See [Algorithm Complexity Analysis](docs/complexity-analysis.md).
 The `results/` directory contains experimental evidence, including:
 
 - Saved chromosomes (`.npy`)
-- Recorded statistics (`.json`)
+- Recorded experiment statistics (`.json`)
 - Fitness comparison graphs (`.png`)
-- Kaggle checkpoint archives (`.zip`)
+
+Additional Kaggle checkpoint archives (`.zip`) are retained locally as backups.
+
+These archives may not be included in GitHub because they are excluded by `.gitignore`.
 
 The `notebooks/` directory contains notebook-based experiment work.
 
@@ -415,6 +491,7 @@ The experiments have several limitations:
 - Evaluation budgets and command lengths were substantially below the maximum permitted commands.
 - Optimization methods may become trapped in local optima.
 - Hybrid Search performs additional legal-movement generation work beyond counted fitness evaluations.
+- Refinement comparisons were performed using limited mutation settings and evaluation budgets.
 - Larger experiments could provide stronger statistical evidence and potentially better solutions.
 
 The project reports the best solutions found under the tested settings rather than claiming globally optimal configurations.
@@ -423,8 +500,12 @@ The project reports the best solutions found under the tested settings rather th
 
 This project demonstrates the implementation, testing, and experimental evaluation of optimization algorithms for ESA's SpOC-3 Programmable Cubes challenge.
 
-Three scenarios—ISS, JWST, and Enterprise—were investigated using random search, local optimization, legal-movement strategies, hybrid approaches, and mutation-based refinement.
+Three scenarios—ISS, JWST, and Enterprise—were investigated using Random Search, Hill Climbing, legal-movement strategies, Hybrid Search, and mutation-based refinement.
 
 Hybrid Search produced strong results across the tested scenarios, and refinement strategies further improved the best solutions.
+
+For Enterprise, the final audit identified and corrected a fitness-sign error. The optimization and refinement experiments were repeated using ESA's official fitness direction.
+
+The strongest corrected Enterprise solution achieved a verified fitness of **-0.013940532081377245**.
 
 The project provides a reproducible experimental framework for studying optimization techniques, algorithm complexity, movement constraints, and the impact of computational budgets on solution quality.

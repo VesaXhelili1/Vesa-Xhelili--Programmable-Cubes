@@ -1,0 +1,124 @@
+{
+  "version": "Enterprise V3 - corrected ESA fitness",
+  "fitness_direction": "official_ESA_minimize",
+  "seeds": [
+    10,
+    20,
+    30
+  ],
+  "commands": 100,
+  "evaluations_per_run": 100,
+  "completed_runs": 9,
+  "best_algorithm": "hybrid",
+  "best_seed": 20,
+  "best_fitness": -0.009539123630673031,
+  "comparison": {
+    "random": {
+      "mean_fitness": -0.0036705790297340245,
+      "best_fitness": -0.004257433489827941,
+      "std_fitness": 0.00041496876830197845
+    },
+    "hill": {
+      "mean_fitness": -0.007778560250391308,
+      "best_fitness": -0.008658841940532156,
+      "std_fitness": 0.0007187469902532719
+    },
+    "hybrid": {
+      "mean_fitness": -0.008365414710485198,
+      "best_fitness": -0.009539123630673031,
+      "std_fitness": 0.0008299375366039573
+    }
+  },
+  "results": [
+    {
+      "algorithm": "random",
+      "seed": 10,
+      "commands": 100,
+      "evaluations": 100,
+      "mutations": null,
+      "fitness": -0.0033771517996870662,
+      "time_seconds": 13.490027865000002,
+      "fitness_direction": "official_ESA_minimize"
+    },
+    {
+      "algorithm": "random",
+      "seed": 20,
+      "commands": 100,
+      "evaluations": 100,
+      "mutations": null,
+      "fitness": -0.004257433489827941,
+      "time_seconds": 13.441890376999936,
+      "fitness_direction": "official_ESA_minimize"
+    },
+    {
+      "algorithm": "random",
+      "seed": 30,
+      "commands": 100,
+      "evaluations": 100,
+      "mutations": null,
+      "fitness": -0.0033771517996870662,
+      "time_seconds": 13.458932340000047,
+      "fitness_direction": "official_ESA_minimize"
+    },
+    {
+      "algorithm": "hill",
+      "seed": 10,
+      "commands": 100,
+      "evaluations": 100,
+      "mutations": 10,
+      "fitness": -0.006898278560250486,
+      "time_seconds": 13.035207163999985,
+      "fitness_direction": "official_ESA_minimize"
+    },
+    {
+      "algorithm": "hill",
+      "seed": 20,
+      "commands": 100,
+      "evaluations": 100,
+      "mutations": 10,
+      "fitness": -0.008658841940532156,
+      "time_seconds": 14.606275342000004,
+      "fitness_direction": "official_ESA_minimize"
+    },
+    {
+      "algorithm": "hill",
+      "seed": 30,
+      "commands": 100,
+      "evaluations": 100,
+      "mutations": 10,
+      "fitness": -0.007778560250391281,
+      "time_seconds": 13.25726492399997,
+      "fitness_direction": "official_ESA_minimize"
+    },
+    {
+      "algorithm": "hybrid",
+      "seed": 10,
+      "commands": 100,
+      "evaluations": 100,
+      "mutations": 10,
+      "fitness": -0.007778560250391281,
+      "time_seconds": 10.896775423000008,
+      "fitness_direction": "official_ESA_minimize"
+    },
+    {
+      "algorithm": "hybrid",
+      "seed": 20,
+      "commands": 100,
+      "evaluations": 100,
+      "mutations": 10,
+      "fitness": -0.009539123630673031,
+      "time_seconds": 10.628230793000057,
+      "fitness_direction": "official_ESA_minimize"
+    },
+    {
+      "algorithm": "hybrid",
+      "seed": 30,
+      "commands": 100,
+      "evaluations": 100,
+      "mutations": 10,
+      "fitness": -0.007778560250391281,
+      "time_seconds": 10.785668362000024,
+      "fitness_direction": "official_ESA_minimize"
+    }
+  ]
+}

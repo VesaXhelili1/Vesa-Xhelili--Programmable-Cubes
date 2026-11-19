@@ -5,189 +5,328 @@
 The Enterprise scenario is part of ESA's SpOC-3
 Programmable Cubes challenge.
 
-The objective is to optimize sequences of movement commands
-using the official ESA simulation and fitness evaluator.
+The objective is to optimize movement-command sequences
+that transform an initial cube configuration toward a
+target configuration.
 
 ### Enterprise Configuration
 
 - Number of cubes: 1,472
 - Number of cube types: 10
 - Maximum permitted commands: 100,000
-- Commands used in reported experiments: 100
+- Commands used in the reported experiments: 100
 
-Each chromosome represents a sequence of cube movement commands.
+Each chromosome represents a sequence of cube movement
+commands, followed by the termination marker -1.
 
-The official ESA fitness evaluator was used to assess
-candidate solutions. Lower fitness values indicate better
-results.
+Solutions are evaluated using ESA's official fitness
+function. Lower fitness values indicate better results.
 
 ## 2. Implemented Algorithms
 
 ### Random Search
 
-Random Search generates candidate chromosomes and evaluates
-them independently.
+Random Search generates candidate chromosomes containing
+random movement commands.
 
-The algorithm preserves the best solution encountered.
+Each chromosome is evaluated independently, and the
+algorithm retains the candidate with the lowest fitness.
 
 ### Hill Climbing
 
-Hill Climbing begins with an initial candidate chromosome
-and modifies selected commands.
+Hill Climbing starts with an initial chromosome and
+repeatedly mutates selected commands.
 
-A mutated candidate is retained when its fitness improves
-upon the current best solution.
+A new candidate is accepted when its official ESA
+fitness is lower than the current best value.
+
+### Legal-Move Search
+
+Legal-Move Search generates command sequences by
+attempting movements and retaining accepted commands.
+
+This helps construct chromosomes from movements that
+are legal in the simulated cube configuration.
 
 ### Hybrid Search
 
 Hybrid Search combines legal-movement initialization
 with iterative mutation-based optimization.
 
-The initial chromosome is constructed using accepted
-movements before additional optimization.
+It first generates a chromosome using accepted movements
+and then improves that chromosome through mutations.
 
 ### Refinement Search
 
-Refinement Search starts with the best Hybrid Search
-chromosome and applies mutations of different sizes.
+Refinement Search begins with a previously optimized
+chromosome and explores additional mutations.
 
-Three mutation sizes were evaluated:
-1, 3, and 10 commands.
+Three mutation sizes were investigated:
+
+- 1 command
+- 3 commands
+- 10 commands
+
+Each experiment starts from the same optimization baseline.
 
 ## 3. Experimental Environment
 
 - Programming language: Python
-- Execution platform: Kaggle CPU
 - Development environment: Visual Studio Code
+- Execution platform: Kaggle CPU
 - Fitness evaluation: Official ESA simulator
-- Recorded results: JSON files and NumPy chromosomes
+- Numerical computation: NumPy
 - Visualization: Matplotlib
+- Automated testing: pytest
 
-Source code was developed in VS Code and executed on Kaggle
-for computationally intensive experiments.
+Source code was developed locally in VS Code.
 
-## 4. Initial Experiment — Enterprise V1
+Computationally intensive optimization experiments
+were executed on Kaggle.
 
-Settings:
+The results were saved as NumPy chromosomes, JSON
+statistics, graphs, and checkpoint archives.
 
+## 4. Fitness Evaluation Verification
+
+During the final project audit, a sign inversion was
+identified in the initial Enterprise fitness wrapper.
+
+The original wrapper reversed the fitness value returned
+by ESA's official evaluator.
+
+This was corrected so that the wrapper directly returns
+the official ESA fitness value.
+
+The correction was verified using a direct comparison
+between the wrapper and the official simulator.
+
+An automated regression test was also added to ensure
+that future changes do not reverse the fitness sign.
+
+The corrected implementation passed all 23 Enterprise
+automated tests.
+
+The earlier Enterprise V1/V2 optimization results were
+retained as historical checkpoints but excluded from
+the final performance conclusions.
+
+All results reported below use the corrected ESA fitness
+direction.
+
+## 5. Corrected Optimization Experiments — Enterprise V3
+
+Three algorithms were evaluated:
+
+- Random Search
+- Hill Climbing
+- Hybrid Search
+
+### Experimental Settings
+
+- Number of cubes: 1,472
+- Chromosome length: 100 commands
 - Seeds: 10, 20, 30
-- Commands: 100
-- Evaluations per algorithm per seed: 20
-- Total requested evaluations: 180
+- Fitness evaluations per run: 100
+- Mutation size for Hill Climbing and Hybrid Search: 10
+- Number of algorithm runs: 9
+- Total requested fitness evaluations: 900
 
-| Algorithm     | Mean Fitness | Best Fitness |
-| ------------- | -----------: | -----------: |
-| Random Search | -0.004251956 | -0.005425665 |
-| Hill Climbing | -0.002491393 | -0.003665102 |
-| Hybrid Search | -0.005132238 | -0.005425665 |
+Each completed result was verified using ESA's official
+fitness evaluator.
 
-Hybrid Search achieved the best mean fitness in the initial
-experiment.
-
-Random Search and Hybrid Search tied for the best
-individual result.
-
-## 5. Extended Experiment — Enterprise V2
-
-Settings:
-
-- Seeds: 10, 20, 30
-- Commands: 100
-- Evaluations per algorithm per seed: 100
-- Total requested evaluations: 900
+### Results by Seed
 
 | Algorithm     |      Seed 10 |      Seed 20 |      Seed 30 |
 | ------------- | -----------: | -----------: | -----------: |
-| Random Search | -0.005425665 | -0.003665102 | -0.004545383 |
-| Hill Climbing | -0.010707355 | -0.006305947 | -0.008066510 |
-| Hybrid Search | -0.012467919 | -0.009827074 | -0.008066510 |
+| Random Search | -0.003377152 | -0.004257433 | -0.003377152 |
+| Hill Climbing | -0.006898279 | -0.008658842 | -0.007778560 |
+| Hybrid Search | -0.007778560 | -0.009539124 | -0.007778560 |
 
-The best fitness from the extended experiment was:
+### Mean and Best Fitness
 
-**-0.012467918622848122**
+| Algorithm     |     Mean Fitness |     Best Fitness |
+| ------------- | ---------------: | ---------------: |
+| Random Search |     -0.003670579 |     -0.004257433 |
+| Hill Climbing |     -0.007778560 |     -0.008658842 |
+| Hybrid Search | **-0.008365415** | **-0.009539124** |
 
-This result was produced by Hybrid Search with Seed 10.
+Hybrid Search achieved the lowest mean fitness across
+the three seeds.
 
-Hybrid Search achieved the best fitness for Seeds 10 and 20
-and tied with Hill Climbing for Seed 30.
+It produced the best result for Seeds 10 and 20 and tied
+with Hill Climbing for Seed 30.
 
-## 6. Refinement Experiments
+### Best Optimization Result
 
-The best Hybrid Search chromosome was selected as the
-baseline for further optimization.
+- Algorithm: Hybrid Search
+- Seed: 20
+- Chromosome length: 100 commands
+- Best official ESA fitness: -0.009539123630673031
 
-Baseline fitness:
+Hybrid Search required additional movement attempts
+during legal-movement initialization.
 
-**-0.012467918622848122**
+These operations are not included in the requested
+fitness-evaluation count.
 
-Each mutation size was tested using 100 evaluations.
+## 6. Corrected Refinement Experiments
 
-| Mutation Size | Best Fitness | Improvements |    Time |
-| ------------- | -----------: | -----------: | ------: |
-| 1 command     | -0.013348200 |            1 | 11.63 s |
-| 3 commands    | -0.015108764 |            3 | 11.86 s |
-| 10 commands   | -0.015108764 |            3 | 11.92 s |
+The best corrected Hybrid Search chromosome was selected
+as the starting point for further refinement.
 
-Both 3-command and 10-command mutation strategies reached
-the same best fitness value.
+### Refinement Settings
 
-Mutation size 3 was selected as the representative best
-solution. Both best chromosomes were preserved.
+- Baseline algorithm: Hybrid Search
+- Baseline seed: 20
+- Baseline fitness: -0.009539123630673031
+- Chromosome length: 100 commands
+- Mutation sizes: 1, 3, 10 commands
+- Evaluations per mutation size: 100
+- Total requested refinement evaluations: 300
 
-## 7. Final Result
+Each mutation-size experiment started from the same
+corrected baseline chromosome.
 
-The best verified fitness achieved was:
+### Refinement Results
 
-**-0.015108763693270667**
+| Mutation Size |     Best Fitness | Improvements | Runtime |
+| ------------- | ---------------: | -----------: | ------: |
+| 1 command     |     -0.011299687 |            2 | 11.03 s |
+| 3 commands    |     -0.013060250 |            4 | 11.44 s |
+| 10 commands   | **-0.013940532** |        **4** | 11.38 s |
 
-The final chromosome contains 100 movement commands.
+### Refinement Analysis
 
-The result was verified using the official ESA fitness
-function.
+The 1-command mutation experiment achieved two
+improvements at evaluations 14 and 63.
 
-This represents the best solution found during the reported
-experiments, not a claim that every cube reached its target.
+The 3-command mutation experiment achieved four
+improvements at evaluations 5, 11, 56, and 91.
+
+The 10-command mutation experiment achieved four
+improvements at evaluations 13, 36, 51, and 92.
+
+Among the tested mutation sizes, the 10-command strategy
+produced the lowest official ESA fitness.
+
+## 7. Final Enterprise Result
+
+The best verified Enterprise solution was obtained using
+Hybrid Search followed by 10-command mutation refinement.
+
+### Final Solution
+
+- Scenario: Enterprise
+- Number of cubes: 1,472
+- Commands: 100
+- Baseline algorithm: Hybrid Search
+- Baseline seed: 20
+- Selected mutation size: 10
+- Final official ESA fitness: -0.013940532081377245
+- Official fitness verification: Passed
+
+The final chromosome is preserved in:
+
+`results/enterprise/enterprise_v3_refined_best.npy`
+
+The final corrected experiment statistics are available in:
+
+`results/enterprise/enterprise_v3_final_summary.json`
+
+`results/enterprise/enterprise_v3_refinement_summary.json`
+
+These results represent the strongest solution found
+during the reported experiments.
+
+They do not demonstrate that all 1,472 cubes reached
+their exact target positions.
 
 ## 8. Visualizations
 
-The following figures were generated from saved experiment
-results:
+Three graphs were generated from the corrected
+Enterprise V3 experiment results.
 
-### Algorithm Comparison
+### Algorithm Fitness Comparison
 
-![Enterprise algorithm comparison](../results/enterprise/enterprise_fitness_comparison.png)
+![Enterprise algorithm fitness comparison](../results/enterprise/enterprise_fitness_comparison.png)
 
 ### Mutation Size Comparison
 
-![Enterprise mutation comparison](../results/enterprise/enterprise_mutation_comparison.png)
+![Enterprise mutation size comparison](../results/enterprise/enterprise_mutation_comparison.png)
 
 ### Refinement Convergence
 
 ![Enterprise refinement convergence](../results/enterprise/enterprise_refinement_convergence.png)
 
-## 9. Limitations
+The graphs were generated using:
 
-- Experiments used 100 commands, below the maximum allowed.
+`src/enterprise/enterprise_experiment_analysis.py`
+
+The analysis script uses saved experimental statistics
+and does not require rerunning the optimization.
+
+## 9. Algorithm Complexity
+
+The project includes theoretical time and auxiliary
+space complexity analysis for:
+
+- Random Search
+- Hill Climbing
+- Legal-Move Generation
+- Hybrid Search
+- Mutation-Based Refinement
+
+The complexity analysis considers the number of cubes,
+chromosome length, mutation size, and number of fitness
+evaluations.
+
+ESA's simulator evaluation cost is represented
+separately because its internal runtime depends on
+the simulator implementation.
+
+Detailed expressions and explanations are available in:
+
+`docs/complexity-analysis.md`
+
+## 10. Limitations
+
+The experiments have several limitations:
+
+- The chromosome length was limited to 100 commands.
 - Three random seeds were used for algorithm comparisons.
-- Additional experiments could provide stronger statistical
-  evidence.
-- Hybrid Search performs extra legal-movement generation
-  work that is not captured by fitness evaluation counts.
-- The experiments do not demonstrate complete assembly of
-  the Enterprise target configuration.
+- Each algorithm was tested with a limited evaluation budget.
+- Hybrid Search performs additional legal-movement attempts
+  beyond the counted fitness evaluations.
+- The mutation-size comparison uses one experiment per size.
+- The results do not establish global optimality.
+- Complete Enterprise target assembly was not achieved.
 
-## 10. Conclusion
+Larger evaluation budgets, additional random seeds,
+and longer chromosomes may produce better results.
 
-The experiments demonstrated the implementation and
-evaluation of Random Search, Hill Climbing, Hybrid Search,
-and mutation-based refinement on the Enterprise scenario.
+## 11. Conclusion
 
-Hybrid Search produced the strongest results during the
-extended comparison, while refinement further improved
-the best chromosome.
+The Enterprise experiments demonstrate the implementation
+and evaluation of Random Search, Hill Climbing, Legal-Move
+Search, Hybrid Search, and mutation-based refinement.
 
-The final verified fitness was -0.015108763693270667.
+Using the corrected official ESA fitness function,
+Hybrid Search achieved the best mean fitness in the
+three-seed optimization comparison.
 
-All reported optimization results were generated using
-ESA's official simulator on Kaggle, with chromosomes,
-statistics, and checkpoints retained for reproducibility.
+Mutation-based refinement further improved the best
+Hybrid Search chromosome.
+
+The strongest tested strategy was 10-command mutation
+refinement, achieving an official ESA fitness of:
+
+**-0.013940532081377245**
+
+The final results are supported by saved chromosomes,
+JSON statistics, graphs, automated tests, and Kaggle
+experiment checkpoints.
+
+The project provides reproducible experimental evidence
+for comparing optimization strategies on the Enterprise
+Programmable Cubes scenario.

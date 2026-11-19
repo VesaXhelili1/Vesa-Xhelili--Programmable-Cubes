@@ -37,7 +37,7 @@ def evaluate_enterprise(chromosome):
 
         official_fitness = problem.fitness(chromosome)[0]
 
-        return -float(official_fitness)
+        return float(official_fitness)
 
     finally:
         os.chdir(previous_directory)

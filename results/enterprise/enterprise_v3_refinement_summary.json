@@ -1,0 +1,27 @@
+{
+  "version": "Enterprise V3 - corrected ESA fitness",
+  "fitness_direction": "official_ESA_minimize",
+  "baseline_fitness": -0.009539123630673031,
+  "best_fitness": -0.013940532081377245,
+  "best_mutation_size": 10,
+  "experiments": [
+    {
+      "mutation_size": 1,
+      "fitness": -0.0112996870109547,
+      "improvements": 2,
+      "time_seconds": 11.03164736399981
+    },
+    {
+      "mutation_size": 3,
+      "fitness": -0.01306025039123637,
+      "improvements": 4,
+      "time_seconds": 11.440764636999802
+    },
+    {
+      "mutation_size": 10,
+      "fitness": -0.013940532081377245,
+      "improvements": 4,
+      "time_seconds": 11.37654089900002
+    }
+  ]
+}

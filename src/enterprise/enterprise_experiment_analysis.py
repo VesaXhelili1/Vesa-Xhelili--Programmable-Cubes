@@ -10,52 +10,68 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[2]
 RESULTS_DIR = ROOT / "results" / "enterprise"
 
-V2_ARCHIVE = RESULTS_DIR / "enterprise-checkpoint-v4.zip"
+# Corrected Enterprise V3 experiment files.
+OPTIMIZATION_SUMMARY = (
+    RESULTS_DIR / "enterprise_v3_final_summary.json"
+)
+
+REFINEMENT_SUMMARY = (
+    RESULTS_DIR / "enterprise_v3_refinement_summary.json"
+)
+
 REFINEMENT_ARCHIVE = (
-    RESULTS_DIR / "enterprise-refinement-final.zip"
+    RESULTS_DIR / "enterprise-v3-refinement-final.zip"
 )
 
 ALGORITHMS = ("random", "hill", "hybrid")
 SEEDS = (10, 20, 30)
-MUTATIONS = (1, 3, 10)
-
-
-def read_json(archive, filename):
-    with archive.open(filename) as file:
-        return json.load(file)
+MUTATION_SIZES = (1, 3, 10)
 
 
 def load_results():
-    assert V2_ARCHIVE.exists(), "Enterprise V4 ZIP missing"
-    assert REFINEMENT_ARCHIVE.exists(), "Refinement ZIP missing"
+    for file in (
+        OPTIMIZATION_SUMMARY,
+        REFINEMENT_SUMMARY,
+        REFINEMENT_ARCHIVE,
+    ):
+        assert file.exists(), f"Missing required file: {file}"
 
-    with ZipFile(V2_ARCHIVE) as archive:
-        summary = read_json(
-            archive, "enterprise_v2_summary.json"
-        )
+    with OPTIMIZATION_SUMMARY.open() as file:
+        optimization = json.load(file)
+
+    with REFINEMENT_SUMMARY.open() as file:
+        refinement = json.load(file)
+
+    assert (
+        optimization["fitness_direction"]
+        == "official_ESA_minimize"
+    )
+
+    assert (
+        refinement["fitness_direction"]
+        == "official_ESA_minimize"
+    )
+
+    histories = {}
 
     with ZipFile(REFINEMENT_ARCHIVE) as archive:
-        refinement = read_json(
-            archive, "enterprise_refinement_summary.json"
-        )
-
-        histories = {}
-
-        for mutation_size in MUTATIONS:
-            data = read_json(
-                archive,
-                f"mutation_{mutation_size}/refinement_results.json",
+        for size in MUTATION_SIZES:
+            filename = (
+                f"mutation_{size}/refinement_results.json"
             )
 
-            histories[mutation_size] = (
+            with archive.open(filename) as file:
+                data = json.load(file)
+
+            histories[size] = (
                 data["experiments"][0]["fitness_history"]
             )
 
-    return summary, refinement, histories
+    return optimization, refinement, histories
 
 
-def plot_algorithm_comparison(summary):
-    runs = summary["results"]
+def plot_algorithm_comparison(optimization):
+    runs = optimization["results"]
 
     plt.figure(figsize=(10, 6))
 
@@ -69,11 +85,11 @@ def plot_algorithm_comparison(summary):
                 and run["seed"] == seed
             ]
 
-            assert len(matching) == 1, (
-                f"Missing run: {algorithm}, seed {seed}"
-            )
+            assert len(matching) == 1
 
-            fitness_values.append(matching[0]["fitness"])
+            fitness_values.append(
+                matching[0]["fitness"]
+            )
 
         plt.plot(
             SEEDS,
@@ -82,105 +98,154 @@ def plot_algorithm_comparison(summary):
             label=algorithm.title(),
         )
 
-    plt.title("Enterprise: Algorithm Fitness Comparison")
+    plt.title(
+        "Enterprise V3: Corrected Algorithm Comparison"
+    )
     plt.xlabel("Random Seed")
-    plt.ylabel("Best ESA Fitness (Lower Is Better)")
+    plt.ylabel("Official ESA Fitness (Lower Is Better)")
     plt.xticks(SEEDS)
     plt.legend()
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
 
-    path = RESULTS_DIR / "enterprise_fitness_comparison.png"
-    plt.savefig(path, dpi=200)
+    output = (
+        RESULTS_DIR / "enterprise_fitness_comparison.png"
+    )
+
+    plt.savefig(output, dpi=200)
     plt.close()
 
-    print("Created:", path.name)
+    print("Created:", output.name)
 
 
 def plot_mutation_comparison(refinement):
     experiments = refinement["experiments"]
 
-    fitness_values = []
+    values = []
 
-    for mutation_size in MUTATIONS:
+    for size in MUTATION_SIZES:
         matching = [
-            experiment for experiment in experiments
-            if experiment["mutation_size"] == mutation_size
+            item for item in experiments
+            if item["mutation_size"] == size
         ]
 
         assert len(matching) == 1
-        fitness_values.append(matching[0]["fitness"])
+        values.append(matching[0]["fitness"])
 
     plt.figure(figsize=(9, 6))
 
     plt.bar(
-        [str(size) for size in MUTATIONS],
-        fitness_values,
+        [str(size) for size in MUTATION_SIZES],
+        values,
     )
 
-    plt.title("Enterprise: Mutation Size Comparison")
+    plt.title(
+        "Enterprise V3: Corrected Mutation Comparison"
+    )
     plt.xlabel("Number of Mutated Commands")
-    plt.ylabel("Best ESA Fitness (Lower Is Better)")
+    plt.ylabel("Official ESA Fitness (Lower Is Better)")
     plt.grid(axis="y", alpha=0.3)
     plt.tight_layout()
 
-    path = RESULTS_DIR / "enterprise_mutation_comparison.png"
-    plt.savefig(path, dpi=200)
+    output = (
+        RESULTS_DIR / "enterprise_mutation_comparison.png"
+    )
+
+    plt.savefig(output, dpi=200)
     plt.close()
 
-    print("Created:", path.name)
+    print("Created:", output.name)
 
 
 def plot_refinement_convergence(histories):
     plt.figure(figsize=(10, 6))
 
-    for mutation_size in MUTATIONS:
+    for size in MUTATION_SIZES:
         history = np.asarray(
-            histories[mutation_size], dtype=float
+            histories[size],
+            dtype=float,
         )
 
-        evaluations = np.arange(1, len(history) + 1)
+        evaluations = np.arange(
+            1,
+            len(history) + 1,
+        )
 
         plt.plot(
             evaluations,
             history,
-            label=f"{mutation_size}-command mutations",
+            label=f"{size}-command mutations",
         )
 
-    plt.title("Enterprise: Refinement Convergence")
+    plt.title(
+        "Enterprise V3: Corrected Refinement Convergence"
+    )
     plt.xlabel("Fitness Evaluation")
-    plt.ylabel("Best ESA Fitness (Lower Is Better)")
+    plt.ylabel("Best Official ESA Fitness")
     plt.legend()
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
 
-    path = RESULTS_DIR / "enterprise_refinement_convergence.png"
-    plt.savefig(path, dpi=200)
+    output = (
+        RESULTS_DIR / "enterprise_refinement_convergence.png"
+    )
+
+    plt.savefig(output, dpi=200)
     plt.close()
 
-    print("Created:", path.name)
+    print("Created:", output.name)
 
 
 def main():
-    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    optimization, refinement, histories = load_results()
 
-    summary, refinement, histories = load_results()
-
-    assert len(summary["results"]) == 9
+    assert len(optimization["results"]) == 9
     assert len(refinement["experiments"]) == 3
 
-    print("--- Enterprise Experiment Analysis ---")
+    assert np.isclose(
+        optimization["best_fitness"],
+        -0.009539123630673031,
+        atol=1e-10,
+        rtol=0,
+    )
 
-    plot_algorithm_comparison(summary)
+    assert np.isclose(
+        refinement["best_fitness"],
+        -0.013940532081377245,
+        atol=1e-10,
+        rtol=0,
+    )
+
+    print("--- Enterprise V3 Experiment Analysis ---")
+
+    plot_algorithm_comparison(optimization)
     plot_mutation_comparison(refinement)
     plot_refinement_convergence(histories)
 
-    print("\n--- Final Results ---")
-    print("Best algorithm:", summary["best_algorithm"])
-    print("Optimization fitness:", summary["best_fitness"])
-    print("Refined fitness:", refinement["best_fitness"])
+    print("\n--- Corrected Enterprise Results ---")
+    print(
+        "Best algorithm:",
+        optimization["best_algorithm"],
+    )
+    print(
+        "Best seed:",
+        optimization["best_seed"],
+    )
+    print(
+        "Optimization fitness:",
+        optimization["best_fitness"],
+    )
+    print(
+        "Best mutation size:",
+        refinement["best_mutation_size"],
+    )
+    print(
+        "Final refined fitness:",
+        refinement["best_fitness"],
+    )
+
     print("Graphs generated: 3")
-    print("ENTERPRISE ANALYSIS: PASSED")
+    print("ENTERPRISE V3 ANALYSIS: PASSED")
 
 
 if __name__ == "__main__":
