@@ -1,0 +1,112 @@
+{
+  "version": "Enterprise V2",
+  "seeds": [
+    10,
+    20,
+    30
+  ],
+  "commands": 100,
+  "evaluations_per_run": 100,
+  "completed_runs": 9,
+  "best_algorithm": "hybrid",
+  "best_seed": 10,
+  "best_fitness": -0.012467918622848122,
+  "comparison": {
+    "random": {
+      "mean_fitness": -0.004545383411580515,
+      "best_fitness": -0.005425665101721363,
+      "std_fitness": 0.0007187469902532716
+    },
+    "hill": {
+      "mean_fitness": -0.008359937402190867,
+      "best_fitness": -0.010707355242566453,
+      "std_fitness": 0.0018088069257538044
+    },
+    "hybrid": {
+      "mean_fitness": -0.010120500782472536,
+      "best_fitness": -0.012467918622848122,
+      "std_fitness": 0.001808806925753804
+    }
+  },
+  "results": [
+    {
+      "algorithm": "random",
+      "seed": 10,
+      "evaluations": 100,
+      "commands": 100,
+      "fitness": -0.005425665101721363,
+      "time_seconds": 14.85518746699995
+    },
+    {
+      "algorithm": "random",
+      "seed": 20,
+      "evaluations": 100,
+      "commands": 100,
+      "fitness": -0.003665101721439693,
+      "time_seconds": 14.905917590999934
+    },
+    {
+      "algorithm": "random",
+      "seed": 30,
+      "evaluations": 100,
+      "commands": 100,
+      "mutations": null,
+      "fitness": -0.0045453834115804885,
+      "time_seconds": 14.86183694600004
+    },
+    {
+      "algorithm": "hill",
+      "seed": 10,
+      "evaluations": 100,
+      "commands": 100,
+      "mutations": 10,
+      "fitness": -0.010707355242566453,
+      "time_seconds": 14.353868230999979
+    },
+    {
+      "algorithm": "hill",
+      "seed": 20,
+      "evaluations": 100,
+      "commands": 100,
+      "mutations": 10,
+      "fitness": -0.006305946791862238,
+      "time_seconds": 15.402374864000194
+    },
+    {
+      "algorithm": "hill",
+      "seed": 30,
+      "evaluations": 100,
+      "commands": 100,
+      "mutations": 10,
+      "fitness": -0.008066510172143907,
+      "time_seconds": 14.005195559999947
+    },
+    {
+      "algorithm": "hybrid",
+      "seed": 10,
+      "evaluations": 100,
+      "commands": 100,
+      "mutations": 10,
+      "fitness": -0.012467918622848122,
+      "time_seconds": 12.134086129000025
+    },
+    {
+      "algorithm": "hybrid",
+      "seed": 20,
+      "evaluations": 100,
+      "commands": 100,
+      "mutations": 10,
+      "fitness": -0.009827073552425578,
+      "time_seconds": 13.003883222000013
+    },
+    {
+      "algorithm": "hybrid",
+      "seed": 30,
+      "evaluations": 100,
+      "commands": 100,
+      "mutations": 10,
+      "fitness": -0.008066510172143907,
+      "time_seconds": 11.371286443999907
+    }
+  ]
+}
