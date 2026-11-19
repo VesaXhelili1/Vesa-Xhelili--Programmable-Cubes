@@ -219,3 +219,78 @@ best obtained ISS solution.
 The project provides a reproducible experimental
 framework for studying optimization techniques,
 algorithm complexity, and movement constraints.
+
+---
+
+## JWST Scenario — Optimization
+
+The JWST scenario of ESA's SpOC-3 Programmable Cubes
+challenge contains 643 cubes across six cube types.
+
+### Implemented Algorithms
+
+- Random Search
+- Hill Climbing
+- Legal Move Search
+- Hybrid Search
+- Checkpoint-Based Refinement Search
+
+All algorithms use ESA's official fitness evaluator.
+
+### Experimental Methodology
+
+Algorithms were developed in Python using VS Code.
+Computationally expensive experiments were executed
+on Kaggle using CPU resources.
+
+The project includes reproducible experiment scripts,
+automated tests, saved chromosomes, and statistics.
+
+### Best JWST Results
+
+| Optimization Stage                | Best Fitness |
+| --------------------------------- | -----------: |
+| Initial local optimization        |    -0.038571 |
+| Hybrid Search — 900 evaluations   |    -0.046571 |
+| Hybrid Search — 3,000 evaluations |    -0.056571 |
+| Checkpoint-Based Refinement       |    -0.060571 |
+
+**Best verified fitness:** -0.06057111111111108
+
+Lower fitness values are better.
+
+These results demonstrate improvements in heuristic
+optimization, not a globally optimal solution.
+
+### Experimental Evidence
+
+Generated visualizations:
+
+- `results/jwst/jwst_fitness_progress.png`
+- `results/jwst/jwst_mutation_comparison.png`
+- `results/jwst/jwst_refinement_convergence.png`
+
+Detailed experimental analysis:
+
+- `docs/jwst-experiment-results.md`
+- `docs/complexity-analysis.md`
+
+### Automated Tests
+
+The project passed 25 automated tests.
+
+To execute the test suite:
+
+```bash
+python -m pytest tests/ -q
+```
+
+Computationally expensive optimization experiments
+should be executed on Kaggle rather than locally.
+
+### Implementation
+
+JWST Python algorithms are located in `src/jwst/`.
+
+The full ESA target configuration has not yet been
+achieved.

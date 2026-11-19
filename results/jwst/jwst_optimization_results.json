@@ -1,0 +1,103 @@
+{
+    "best_solution": {
+        "seed": 30,
+        "commands": 300,
+        "evaluations": 100,
+        "fitness": -0.038571111111111125,
+        "successful_moves": 198,
+        "rejected_moves": 102,
+        "time_seconds": 2.0224491672124714
+    },
+    "all_results": [
+        {
+            "seed": 10,
+            "commands": 100,
+            "evaluations": 100,
+            "fitness": -0.023523703703703734,
+            "successful_moves": 67,
+            "rejected_moves": 33,
+            "time_seconds": 1.315212459070608
+        },
+        {
+            "seed": 20,
+            "commands": 100,
+            "evaluations": 100,
+            "fitness": -0.017523703703703663,
+            "successful_moves": 61,
+            "rejected_moves": 39,
+            "time_seconds": 1.1779370000585914
+        },
+        {
+            "seed": 30,
+            "commands": 100,
+            "evaluations": 100,
+            "fitness": -0.019523703703703685,
+            "successful_moves": 68,
+            "rejected_moves": 32,
+            "time_seconds": 1.0368671661708504
+        },
+        {
+            "seed": 40,
+            "commands": 100,
+            "evaluations": 100,
+            "fitness": -0.0075237037037036965,
+            "successful_moves": 75,
+            "rejected_moves": 25,
+            "time_seconds": 1.0545820421539247
+        },
+        {
+            "seed": 50,
+            "commands": 100,
+            "evaluations": 100,
+            "fitness": -0.015523703703703717,
+            "successful_moves": 60,
+            "rejected_moves": 40,
+            "time_seconds": 1.1469010838773102
+        },
+        {
+            "seed": 10,
+            "commands": 300,
+            "evaluations": 100,
+            "fitness": -0.02657111111111114,
+            "successful_moves": 190,
+            "rejected_moves": 110,
+            "time_seconds": 2.5956233330070972
+        },
+        {
+            "seed": 20,
+            "commands": 300,
+            "evaluations": 100,
+            "fitness": -0.024571111111111113,
+            "successful_moves": 221,
+            "rejected_moves": 79,
+            "time_seconds": 2.3458032079506665
+        },
+        {
+            "seed": 30,
+            "commands": 300,
+            "evaluations": 100,
+            "fitness": -0.038571111111111125,
+            "successful_moves": 198,
+            "rejected_moves": 102,
+            "time_seconds": 2.0224491672124714
+        },
+        {
+            "seed": 40,
+            "commands": 300,
+            "evaluations": 100,
+            "fitness": -0.024571111111111113,
+            "successful_moves": 228,
+            "rejected_moves": 72,
+            "time_seconds": 2.173365709139034
+        },
+        {
+            "seed": 50,
+            "commands": 300,
+            "evaluations": 100,
+            "fitness": -0.02657111111111114,
+            "successful_moves": 190,
+            "rejected_moves": 110,
+            "time_seconds": 2.388831791933626
+        }
+    ]
+}

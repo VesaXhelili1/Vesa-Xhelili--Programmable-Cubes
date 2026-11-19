@@ -1,0 +1,26 @@
+{
+    "best_fitness": -0.046571111111111146,
+    "completed_runs": [
+        {
+            "seed": 10,
+            "fitness": -0.040571111111111155,
+            "evaluations": 300,
+            "commands": 300,
+            "time_seconds": 20.63106780399994
+        },
+        {
+            "seed": 20,
+            "fitness": -0.0365711111111111,
+            "evaluations": 300,
+            "commands": 300,
+            "time_seconds": 20.60651608299986
+        },
+        {
+            "seed": 30,
+            "fitness": -0.046571111111111146,
+            "evaluations": 300,
+            "commands": 300,
+            "time_seconds": 22.12745221099999
+        }
+    ]
+}
