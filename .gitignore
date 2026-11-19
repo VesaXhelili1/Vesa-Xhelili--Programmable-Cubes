@@ -14,3 +14,16 @@ __pycache__/
 
 # Official ESA reference repository
 esa-reference/
+
+
+# Kaggle source-transfer archives
+/enterprise-source*.zip
+/jwst-kaggle.zip
+/jwst-source-update.zip
+
+# Kaggle experiment checkpoint backups
+/results/**/*.zip
+
+# Python cache
+__pycache__/
+*.pyc

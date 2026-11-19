@@ -290,3 +290,149 @@ Their computational requirements depend strongly on the number of candidate eval
 Random Search explores independent chromosomes, Hill Climbing searches neighboring solutions, Hybrid Search incorporates legal-move construction, and Checkpoint-Based Refinement improves a previously saved candidate.
 
 The experiments provide empirical performance evidence but do not establish global optimality or guarantee that fitness will improve with every additional evaluation.
+
+---
+
+# Enterprise — Algorithm Complexity Analysis
+
+## 1. Problem Configuration
+
+The Enterprise scenario contains:
+
+- 1,472 cubes
+- 10 cube types
+- Maximum chromosome length: 100,000 movement commands
+
+The experiments used chromosomes containing 100 commands.
+
+Let:
+
+- **N** = number of cubes
+- **L** = number of movement commands
+- **E** = number of fitness evaluations
+- **M** = number of commands mutated
+- **F(N, L)** = time required for one official ESA fitness evaluation
+- **A(N)** = time required for one attempted legal movement
+
+The simulator's evaluation cost depends on its implementation and cannot be assumed to be constant.
+
+## 2. Random Search
+
+Random Search generates and evaluates E candidate chromosomes, each containing L movement commands.
+
+Generating one chromosome requires O(L) time.
+
+**Time complexity:**
+
+O(E × (L + F(N, L)))
+
+**Auxiliary space complexity:**
+
+O(L), excluding the ESA simulator's internal memory.
+
+## 3. Hill Climbing
+
+Hill Climbing begins with an initial candidate and repeatedly mutates selected movement commands.
+
+Each iteration copies a chromosome, modifies M commands, and evaluates the candidate.
+
+**Time complexity:**
+
+O(E × (L + M + F(N, L)))
+
+Since M ≤ L, this simplifies to:
+
+O(E × (L + F(N, L)))
+
+**Auxiliary space complexity:**
+
+O(L), excluding the ESA simulator.
+
+## 4. Legal-Movement Generation
+
+The legal-movement generator constructs a chromosome by attempting movements and retaining accepted commands.
+
+Let A_total be the total number of attempted movements required to produce L accepted commands.
+
+**Time complexity:**
+
+O(A_total × A(N) + L)
+
+**Auxiliary space complexity:**
+
+O(L + N), including the cube-position state but excluding additional simulator internals.
+
+The number of attempted movements depends on the configuration and movement acceptance rate.
+
+## 5. Hybrid Search
+
+Hybrid Search first constructs a legal-movement chromosome and then performs mutation-based optimization.
+
+**Time complexity:**
+
+O(A_total × A(N) + E × (L + M + F(N, L)))
+
+**Auxiliary space complexity:**
+
+O(L + N), excluding simulator-internal allocations.
+
+Hybrid Search can perform additional simulator operations during initialization that are not counted as fitness evaluations.
+
+## 6. Refinement Search
+
+Refinement Search starts from a previously discovered chromosome and explores mutations of size M.
+
+For one mutation size and E evaluations:
+
+**Time complexity:**
+
+O(E × (L + M + F(N, L)))
+
+For K mutation sizes, each with E evaluations:
+
+O(K × E × (L + M + F(N, L)))
+
+Here, M represents the maximum mutation count among the tested sizes.
+
+If all fitness histories are stored, space also includes O(K × E) for the recorded values.
+
+## 7. Experimental Complexity
+
+The Enterprise V2 comparison used:
+
+- N = 1,472 cubes
+- L = 100 commands
+- E = 100 evaluations per run
+- 3 algorithms
+- 3 random seeds
+
+Total requested fitness evaluations:
+
+3 × 3 × 100 = 900
+
+The refinement experiments used:
+
+- K = 3 mutation sizes: 1, 3 and 10
+- E = 100 evaluations per mutation size
+
+Total requested refinement evaluations:
+
+3 × 100 = 300
+
+Additional verification evaluations and legal-movement generation operations were performed.
+
+## 8. Complexity Discussion
+
+The search algorithms require repeated calls to ESA's simulator.
+
+The fitness evaluation cost is therefore a significant component of runtime.
+
+Random Search explores independent candidates, whereas Hill Climbing and Hybrid Search attempt to improve an existing solution.
+
+Hybrid Search introduces additional initialization work by generating accepted movement commands.
+
+Refinement Search focuses its computation on neighborhoods around a previously discovered solution.
+
+The reported complexity expressions describe the Python search algorithms and treat ESA's official fitness evaluator as a separate cost function.
+
+They do not claim an exact internal complexity for the ESA simulator.

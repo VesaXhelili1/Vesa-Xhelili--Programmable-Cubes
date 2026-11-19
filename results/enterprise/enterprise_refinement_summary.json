@@ -1,0 +1,24 @@
+{
+  "best_fitness": -0.015108763693270667,
+  "best_mutation_size": 3,
+  "experiments": [
+    {
+      "mutation_size": 1,
+      "fitness": -0.013348200312988997,
+      "improvements": 1,
+      "time_seconds": 11.62855621000017
+    },
+    {
+      "mutation_size": 3,
+      "fitness": -0.015108763693270667,
+      "improvements": 3,
+      "time_seconds": 11.856234769999901
+    },
+    {
+      "mutation_size": 10,
+      "fitness": -0.015108763693270667,
+      "improvements": 3,
+      "time_seconds": 11.915367714999775
+    }
+  ]
+}
